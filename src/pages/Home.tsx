@@ -14,6 +14,7 @@ import styles from "./Home.module.scss";
 import { RootState, useAppDispatch } from "../redux/store";
 
 export const Home: React.FC = () => {
+  console.log("Home rendered");
   const isAuth = useSelector(selectIsAuth);
   const { items, status } = useSelector((state: RootState) => state.notes);
   const dispatch = useAppDispatch();
