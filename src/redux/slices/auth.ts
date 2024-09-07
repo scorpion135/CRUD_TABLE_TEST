@@ -1,10 +1,22 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
-import axios from "../../axios.js";
+import axios from "../../axios";
+import { Status } from "../slices/notes";
+import { RootState } from "../store";
+
+export type AuthProps = {
+  username: string;
+  password: string;
+};
+
+interface AuthSliceState {
+  data: string | null;
+  status: Status;
+}
 
 export const fetchAuthLogin = createAsyncThunk(
   "auth/fetchAuthLogin",
-  async (params) => {
+  async (params: AuthProps) => {
     const { data } = await axios.post(
       "/ru/data/v3/testmethods/docs/login",
       params
@@ -14,9 +26,9 @@ export const fetchAuthLogin = createAsyncThunk(
   }
 );
 
-const initialState = {
+const initialState: AuthSliceState = {
   data: null,
-  status: "loading",
+  status: Status.LOADING,
 };
 
 const authSlice = createSlice({
@@ -26,7 +38,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.data = null;
     },
-    setAuthData: (state, action) => {
+    setAuthData: (state, action: PayloadAction<string>) => {
       state.data = action.payload;
     },
   },
@@ -34,20 +46,21 @@ const authSlice = createSlice({
     builder
       .addCase(fetchAuthLogin.pending, (state) => {
         state.data = null;
-        state.status = "loading";
+        state.status = Status.LOADING;
       })
       .addCase(fetchAuthLogin.fulfilled, (state, action) => {
+        console.log(action.payload);
         state.data = action.payload.data;
-        state.status = "loaded";
+        state.status = Status.SUCCESS;
       })
       .addCase(fetchAuthLogin.rejected, (state) => {
         state.data = null;
-        state.status = "error";
+        state.status = Status.ERROR;
       });
   },
 });
 
-export const selectIsAuth = (state) => Boolean(state.auth.data);
+export const selectIsAuth = (state: RootState) => Boolean(state.auth.data);
 
 export const authReducer = authSlice.reducer;
 

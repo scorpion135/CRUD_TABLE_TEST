@@ -7,21 +7,26 @@ import Paper from "@mui/material/Paper";
 import { Edit } from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import { selectIsAuth } from "./../redux/slices/auth";
+import { selectIsAuth } from "../redux/slices/auth";
 import { fetchTableData, fetchRemoveNote } from "../redux/slices/notes";
 
 import styles from "./Home.module.scss";
+import { RootState, useAppDispatch } from "../redux/store";
 
-export const Home = () => {
+export const Home: React.FC = () => {
   const isAuth = useSelector(selectIsAuth);
-  const { items, status } = useSelector((state) => state.notes);
-  const dispatch = useDispatch();
+  const { items, status } = useSelector((state: RootState) => state.notes);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(fetchTableData());
+    try {
+      dispatch(fetchTableData());
+    } catch (e) {
+      console.warn(e.message);
+    }
   }, []);
 
-  const onClickRemoveNote = async (id) => {
+  const onClickRemoveNote = async (id: string) => {
     try {
       if (window.confirm("Вы уверены, что хотите удалить запись?")) {
         await dispatch(fetchRemoveNote(id));
@@ -85,13 +90,7 @@ export const Home = () => {
       renderCell: (params) => (
         <div className={styles.actions}>
           <Link to={`add-note/${params.row.id}/edit`} className={styles.link}>
-            <Edit
-              color="primary"
-              onClick={() => {
-                console.log(params.row.id);
-              }}
-              sx={{ cursor: "pointer" }}
-            />
+            <Edit color="primary" sx={{ cursor: "pointer" }} />
           </Link>
 
           <DeleteIcon

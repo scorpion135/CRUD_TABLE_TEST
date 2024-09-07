@@ -1,6 +1,29 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
-import axios from "../../axios.js";
+import axios from "../../axios";
+
+export type Note = {
+  id: string;
+  documentStatus: string;
+  employeeNumber: string;
+  documentType: string;
+  documentName: string;
+  companySignatureName: string;
+  employeeSignatureName: string;
+  employeeSigDate: string;
+  companySigDate: string;
+};
+
+export enum Status {
+  LOADING = "loading",
+  SUCCESS = "success",
+  ERROR = "error",
+}
+
+interface NotesSliceState {
+  items: Note[];
+  status: Status;
+}
 
 export const fetchTableData = createAsyncThunk(
   "notes/fetchTableData",
@@ -15,20 +38,20 @@ export const fetchTableData = createAsyncThunk(
 
 export const fetchRemoveNote = createAsyncThunk(
   "notes/fetchRemoveNote",
-  async (id) =>
+  async (id: string) =>
     await axios.delete(`/ru/data/v3/testmethods/docs/userdocs/delete/${id}`)
 );
 
-const initialState = {
+const initialState: NotesSliceState = {
   items: [],
-  status: "loading",
+  status: Status.LOADING,
 };
 
 const notesSlice = createSlice({
   name: "notes",
   initialState,
   reducers: {
-    createNote: (state, action) => {
+    createNote: (state, action: PayloadAction<Note>) => {
       state.items.push(action.payload);
     },
   },
@@ -36,16 +59,16 @@ const notesSlice = createSlice({
     builder
       .addCase(fetchTableData.pending, (state) => {
         state.items = [];
-        state.status = "loading";
+        state.status = Status.LOADING;
       })
       .addCase(fetchTableData.fulfilled, (state, action) => {
         console.log(action.payload);
         state.items = action.payload;
-        state.status = "loaded";
+        state.status = Status.SUCCESS;
       })
       .addCase(fetchTableData.rejected, (state) => {
         state.items = [];
-        state.status = "error";
+        state.status = Status.ERROR;
       });
   },
 });

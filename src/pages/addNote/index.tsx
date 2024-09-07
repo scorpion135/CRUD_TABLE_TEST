@@ -13,12 +13,14 @@ import { createNote } from "../../redux/slices/notes";
 import { fetchTableData } from "../../redux/slices/notes";
 
 import styles from "./AddNote.module.scss";
+import { useAppDispatch } from "../../redux/store";
+import { Note } from "../../redux/slices/notes";
 
-export const AddNote = () => {
+export const AddNote: React.FC = () => {
   const { id } = useParams();
   const isAuth = useSelector(selectIsAuth);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const [companySigDate, setCompanySigDate] = React.useState("");
   const [companySignatureName, setCompanySignatureName] = React.useState("");
@@ -35,7 +37,9 @@ export const AddNote = () => {
     if (id) {
       dispatch(fetchTableData())
         .then((data) => {
-          const editingNote = data.payload.filter((item) => item.id === id)[0];
+          const editingNote = data.payload.filter(
+            (item: Note) => item.id === id
+          )[0];
           setCompanySigDate(editingNote.companySigDate);
           setCompanySignatureName(editingNote.companySignatureName);
           setDocumentName(editingNote.documentName);

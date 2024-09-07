@@ -9,10 +9,9 @@ import { logout, selectIsAuth } from "../../redux/slices/auth";
 
 import styles from "./Header.module.scss";
 
-export const Header = () => {
+export const Header: React.FC = () => {
   const dispatch = useDispatch();
   const isAuth = useSelector(selectIsAuth);
-  const items = useSelector((state) => state.notes.items);
 
   const onClickLogout = () => {
     if (window.confirm("Вы уверены, что хотите выйти?")) {

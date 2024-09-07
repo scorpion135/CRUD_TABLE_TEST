@@ -1,4 +1,4 @@
-import { React, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
@@ -10,11 +10,13 @@ import { Login } from "./pages/Login";
 import { AddNote } from "./pages/addNote";
 
 import { setAuthData } from "./redux/slices/auth";
+import "./index.scss";
 
 function App() {
   const dispatch = useDispatch();
 
   const token = localStorage.getItem("token");
+  console.log(token);
 
   useEffect(() => {
     if (token) {
@@ -25,7 +27,7 @@ function App() {
   return (
     <>
       <Header />
-      <Container maxWidth="2xl">
+      <Container maxWidth={false}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

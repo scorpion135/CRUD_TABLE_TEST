@@ -2,6 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { AuthProps } from "../../redux/slices/auth";
 
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
@@ -11,9 +12,10 @@ import Button from "@mui/material/Button";
 import { fetchAuthLogin, selectIsAuth } from "../../redux/slices/auth";
 
 import styles from "./Login.module.scss";
+import { useAppDispatch } from "../../redux/store";
 
-export const Login = () => {
-  const dispatch = useDispatch();
+export const Login: React.FC = () => {
+  const dispatch = useAppDispatch();
 
   const isAuth = useSelector(selectIsAuth);
 
@@ -21,7 +23,7 @@ export const Login = () => {
     register,
     handleSubmit,
     formState: { errors, isValid },
-  } = useForm({
+  } = useForm<AuthProps>({
     defaultValues: {
       username: "",
       password: "",
@@ -29,8 +31,9 @@ export const Login = () => {
     mode: "onChange",
   });
 
-  const onSubmit = async (values) => {
+  const onSubmit = async (values: AuthProps) => {
     const regexUsername = /^user[1-9][0-9]*$/;
+
     if (!regexUsername.test(values.username)) {
       alert("Неверное имя или пароль");
       return;
